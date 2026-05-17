@@ -1,0 +1,11 @@
+build/
+lib/build/
+pimentao_verde_lib/
+cmake-build-debug/
+.idea/
+*.rcg
+*.rcl
+log/
+dist_tmp/
+Pimentao_Verde/
+*.tar.gz

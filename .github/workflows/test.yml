@@ -1,0 +1,77 @@
+name: Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      opponent:
+        description: 'Opponent'
+        required: true
+        default: 'yush22'
+        type: choice
+        options:
+        - yush22
+        - hel22
+      round:
+        description: 'Round * 20'
+        required: true
+        default: '5'
+        type: string
+        
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Prepare
+      run: |
+        echo "teamdir=$(pwd)" >> ${GITHUB_ENV}
+        mkdir build && cd build && mkdir src
+    - name: Install Lib 
+      run: |
+        git clone https://${{ secrets.token }}@github.com/Cyrus2D/cyruslib.git
+        cd cyruslib
+        echo "libcommit=$(git rev-parse --short HEAD)" >> ${GITHUB_ENV}
+        mkdir build && cd build
+        cmake -DTEAM_DIR=${{ env.teamdir }}/build/src/cyruslib ..
+        make -j20
+        make install
+    - name: Build Team
+      run: |
+        cd build
+        cmake -DTEAM_DIR_LIB=${{env.teamdir}}/build/src/cyruslib ..
+        make -j20
+        cd src
+        cp github.sh auto.sh
+    - name: Run Test
+      run: |
+        cd /data1/nader/workspace/robo/AutoTest2D
+        ./test.sh -n gittest -l p1 -p 6000 -r ${{ inputs.opponent }} -t 20 -ro ${{ inputs.round }}  -cb ${{env.teamdir}}/build/src/
+        sleep $(("120"*${{inputs.round}}))s
+    - name: Get Results
+      run: |
+        echo "commit=$(git rev-parse --short HEAD)" >> ${GITHUB_ENV}
+        cd /data1/nader/workspace/robo/AutoTest2D
+        ./result.sh gittest
+        ./result.sh gittest | tail -n 9 >> ${{env.teamdir}}/results.txt
+        echo "time=$(date +%Y-%m-%d-%M-%S)" >> ${GITHUB_ENV}
+    - name: Read results
+      id: package
+      uses: juliangruber/read-file-action@v1
+      with:
+        path: ./results.txt
+    - name: Release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        file: results.txt
+        asset_name: ${{ env.time }}results.txt
+        tag: Test-${{ inputs.opponent}}-${{ env.commit }}-${{ env.libcommit }}
+        overwrite: false
+        body: "${{ steps.package.outputs.content }}"
