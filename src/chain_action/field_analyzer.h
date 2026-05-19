@@ -259,6 +259,7 @@ public:
     static bool isGLD(const rcsc::WorldModel & wm);
     static bool isPers(const rcsc::WorldModel & wm);
     static bool isAlice(const rcsc::WorldModel & wm);
+    static bool isTitasDaRobotica( const rcsc::WorldModel & wm );
 
     /*!
       \brief Heurística: GR adversário longe da baliza (ex.: joga como jogador de linha).

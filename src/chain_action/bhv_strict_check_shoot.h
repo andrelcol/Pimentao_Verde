@@ -32,6 +32,8 @@
 #ifndef BHV_STRICT_CHECK_SHOOT_H
 #define BHV_STRICT_CHECK_SHOOT_H
 
+#include "shoot_generator.h"
+
 #include <rcsc/player/soccer_action.h>
 #include <rcsc/geom/vector_2d.h>
 #include <rcsc/player/world_model.h>
@@ -62,13 +64,17 @@ public:
     bool execute( rcsc::PlayerAgent * agent );
     rcsc::Vector2D get_best_shoot(const rcsc::WorldModel & wm);
 
+    static bool executeKickForCourse( rcsc::PlayerAgent * agent,
+                                      const rcsc::WorldModel & wm,
+                                      const ShootGenerator::Course & course );
+
     static int time;
     static rcsc::Vector2D target;
     static double speed;
 private:
 
-    bool doTurnNeckToShootPoint( rcsc::PlayerAgent * agent,
-                                 const rcsc::Vector2D & shoot_point );
+    static bool doTurnNeckToShootPoint( rcsc::PlayerAgent * agent,
+                                        const rcsc::Vector2D & shoot_point );
 };
 
 #endif

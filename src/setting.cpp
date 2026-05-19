@@ -16,6 +16,10 @@ ChainActionSetting::ChainActionSetting(Value & value){
     {
         mUseShootSafe = value["UseShootSafe"].GetBool();
     }
+    if ( value.HasMember( "UseSmartShoot" ) )
+    {
+        mUseSmartShoot = value["UseSmartShoot"].GetBool();
+    }
     if(value.HasMember("DribblePosCountLow"))
     {
         mDribblePosCountLow = value["DribblePosCountLow"].GetFloat();

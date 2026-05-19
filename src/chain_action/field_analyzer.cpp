@@ -1640,6 +1640,13 @@ bool FieldAnalyzer::isYushan(const rcsc::WorldModel & wm){
     }
     return false;
 }
+
+bool
+FieldAnalyzer::isTitasDaRobotica( const rcsc::WorldModel & wm )
+{
+    return wm.theirTeamName() == "TitasDaRobotica";
+}
+
 bool FieldAnalyzer::isIT(const rcsc::WorldModel & wm){
     std::string name = wm.theirTeamName();
     if( (name.find("I") != std::string::npos || name.find("i") != std::string::npos)
