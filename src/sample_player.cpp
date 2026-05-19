@@ -36,6 +36,7 @@
 #include "chain_action/action_chain_holder.h"
 #include "sample_field_evaluator.h"
 #include "chain_action/bhv_pass_kick_find_receiver.h"
+#include "chain_action/bhv_open_goal_shoot.h"
 #include "data_extractor/offensive_data_extractor.h"
 #include "denoising/localization_denoiser_by_action.h"
 #include "roles/soccer_role.h"
@@ -52,6 +53,7 @@
 
 #include "setplay/bhv_custom_before_kick_off.h"
 #include "bhv_strict_check_shoot.h"
+#include "bhv_smart_shoot.h"
 
 #include "neck/view_tactical.h"
 
@@ -755,7 +757,7 @@ SamplePlayer::doShoot()
     if ( wm.gameMode().type() != GameMode::IndFreeKick_
          && wm.time().stopped() == 0
          && wm.self().isKickable()
-         && Bhv_StrictCheckShoot(0.7).execute( this ) )
+         && Bhv_SmartShoot(0.7).execute( this ) )
     {
         dlog.addText( Logger::TEAM,
                       __FILE__": shooted" );
@@ -768,7 +770,7 @@ SamplePlayer::doShoot()
     if ( wm.gameMode().type() != GameMode::IndFreeKick_
          && wm.time().stopped() == 0
          && wm.self().isKickable()
-         && Bhv_StrictCheckShoot(0.4).execute( this ) )
+         && Bhv_SmartShoot(0.4).execute( this ) )
     {
         dlog.addText( Logger::TEAM,
                       __FILE__": shooted" );
@@ -781,7 +783,7 @@ SamplePlayer::doShoot()
     if ( wm.gameMode().type() != GameMode::IndFreeKick_
          && wm.time().stopped() == 0
          && wm.self().isKickable()
-         && Bhv_StrictCheckShoot(0.2).execute( this ) )
+         && Bhv_SmartShoot(0.2).execute( this ) )
     {
         dlog.addText( Logger::TEAM,
                       __FILE__": shooted" );
@@ -793,12 +795,38 @@ SamplePlayer::doShoot()
     if ( wm.gameMode().type() != GameMode::IndFreeKick_
          && wm.time().stopped() == 0
          && wm.self().isKickable()
-         && Bhv_StrictCheckShoot(0.0).execute( this ) )
+         && Bhv_SmartShoot(0.0).execute( this ) )
     {
         dlog.addText( Logger::TEAM,
                       __FILE__": shooted" );
 
         // reset intention
+        this->setIntention( static_cast< SoccerIntention * >( 0 ) );
+        return true;
+    }
+
+    if ( wm.gameMode().type() != GameMode::IndFreeKick_
+         && wm.time().stopped() == 0
+         && wm.self().isKickable()
+         && FieldAnalyzer::isTitasDaRobotica( wm )
+         && wm.ball().pos().x > 20.0
+         && Bhv_SmartShoot( -0.8 ).execute( this ) )
+    {
+        dlog.addText( Logger::TEAM,
+                      __FILE__": titas relaxed shoot" );
+
+        this->setIntention( static_cast< SoccerIntention * >( 0 ) );
+        return true;
+    }
+
+    if ( wm.gameMode().type() != GameMode::IndFreeKick_
+         && wm.time().stopped() == 0
+         && wm.self().isKickable()
+         && Bhv_OpenGoalShoot().execute( this ) )
+    {
+        dlog.addText( Logger::TEAM,
+                      __FILE__": open goal shoot" );
+
         this->setIntention( static_cast< SoccerIntention * >( 0 ) );
         return true;
     }

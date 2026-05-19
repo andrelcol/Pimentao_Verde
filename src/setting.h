@@ -40,6 +40,7 @@ public:
     int mChainDeph = 2;
     int mChainNodeNumber = 2000;
     bool mUseShootSafe = false;
+    bool mUseSmartShoot = false;
     double mDribblePosCountLow = 0.8;
     double mDribblePosCountHigh = 0.8;
     bool mDribbleAlwaysDanger = true;

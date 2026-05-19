@@ -66,7 +66,8 @@ enum SituationType {
 enum class FormationType{
     F433,
     HeliosFra,
-    F523
+    F523,
+    F352
 };
 enum class PostLine{
     golie,
@@ -119,6 +120,16 @@ private:
     static const std::string F523_SETPLAY_OPP_FORMATION_CONF;
     static const std::string F523_SETPLAY_OUR_FORMATION_CONF;
 
+    static const std::string F352_BEFORE_KICK_OFF_CONF;
+    static const std::string F352_BEFORE_KICK_OFF_CONF_FOR_OUR_KICK;
+    static const std::string F352_DEFENSE_FORMATION_CONF;
+    static const std::string F352_OFFENSE_FORMATION_CONF;
+    static const std::string F352_GOAL_KICK_OPP_FORMATION_CONF;
+    static const std::string F352_GOAL_KICK_OUR_FORMATION_CONF;
+    static const std::string F352_KICKIN_OUR_FORMATION_CONF;
+    static const std::string F352_SETPLAY_OPP_FORMATION_CONF;
+    static const std::string F352_SETPLAY_OUR_FORMATION_CONF;
+
     static const std::string Fhel_BEFORE_KICK_OFF_CONF;
     static const std::string Fhel_DEFENSE_FORMATION_CONF;
     static const std::string Fhel_OFFENSE_FORMATION_CONF;
@@ -153,6 +164,16 @@ private:
     rcsc::Formation::Ptr M_F523_kickin_our_formation;
     rcsc::Formation::Ptr M_F523_setplay_opp_formation;
     rcsc::Formation::Ptr M_F523_setplay_our_formation;
+
+    rcsc::Formation::Ptr M_F352_before_kick_off_formation;
+    rcsc::Formation::Ptr M_F352_before_kick_off_formation_for_our_kick;
+    rcsc::Formation::Ptr M_F352_defense_formation;
+    rcsc::Formation::Ptr M_F352_offense_formation;
+    rcsc::Formation::Ptr M_F352_goal_kick_opp_formation;
+    rcsc::Formation::Ptr M_F352_goal_kick_our_formation;
+    rcsc::Formation::Ptr M_F352_kickin_our_formation;
+    rcsc::Formation::Ptr M_F352_setplay_opp_formation;
+    rcsc::Formation::Ptr M_F352_setplay_our_formation;
 
     rcsc::Formation::Ptr M_Fhel_before_kick_off_formation;
     rcsc::Formation::Ptr M_Fhel_defense_formation;
@@ -263,6 +284,7 @@ public:
     void updateFormationFra( const rcsc::WorldModel & wm );
     void updateFormation433( const rcsc::WorldModel & wm );
     void updateFormation523( const rcsc::WorldModel & wm );
+    void updateFormation352( const rcsc::WorldModel & wm );
     rcsc::Formation::Ptr getFormation( const rcsc::WorldModel & wm );
 
     static rcsc::SideID getBeforeKickOffSide(const rcsc::WorldModel &wm);
@@ -275,6 +297,8 @@ public:
             return FormationType::F433;
         else if (formation == "523")
             return FormationType::F523;
+        else if (formation == "352")
+            return FormationType::F352;
         else
             return FormationType::HeliosFra;
     }

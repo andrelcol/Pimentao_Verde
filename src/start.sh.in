@@ -11,15 +11,40 @@ echo " All rights reserved."
 echo "******************************************************************"
 
 DIR="$(cd "$(dirname "$0")" && pwd)"
-. "${DIR}/../script/setup_libpath.sh" 2>/dev/null \
-  || . "${DIR}/../../script/setup_libpath.sh" 2>/dev/null \
-  || true
-if ! pimentao_export_libpath "${DIR}" 2>/dev/null; then
+
+# dash aborta o script se "." falhar num ficheiro inexistente — testar antes de source
+if [ -f "${DIR}/../../script/setup_libpath.sh" ]; then
+  . "${DIR}/../../script/setup_libpath.sh"
+elif [ -f "${DIR}/../script/setup_libpath.sh" ]; then
+  . "${DIR}/../script/setup_libpath.sh"
+fi
+if type pimentao_export_libpath >/dev/null 2>&1; then
+  pimentao_export_libpath "${DIR}" 2>/dev/null || true
+fi
+if [ -z "${LD_LIBRARY_PATH:-}" ] \
+   || ! ls "${LD_LIBRARY_PATH%%:*}"/librcsc.so* >/dev/null 2>&1; then
   LIBPATH=@LIBRCSC_LIBDIR@
   if [ -d "$LIBPATH" ] && ls "${LIBPATH}"/librcsc.so* >/dev/null 2>&1; then
     export LD_LIBRARY_PATH="${LIBPATH}${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
   fi
 fi
+
+TEAM_LOG="${DIR}/../log/team_start.log"
+mkdir -p "$(dirname "${TEAM_LOG}")" 2>/dev/null || TEAM_LOG="/tmp/rinobot_team_start.log"
+
+server_port_open() {
+  _h="$1"
+  _p="$2"
+  if command -v nc >/dev/null 2>&1; then
+    nc -z "$_h" "$_p" 2>/dev/null
+    return $?
+  fi
+  if command -v ss >/dev/null 2>&1; then
+    ss -tln 2>/dev/null | grep -q ":${_p} "
+    return $?
+  fi
+  return 0
+}
 
 player="${DIR}/sample_player"
 coach="${DIR}/sample_coach"
@@ -311,14 +336,27 @@ opt="${opt} --debug_server_port ${debug_server_port}"
 opt="${opt} ${offline_logging}"
 opt="${opt} ${debugopt}"
 
-ping -c 1 $host
+if ! ping -c 1 "$host" >/dev/null 2>&1; then
+  echo "AVISO: host '${host}' não responde ao ping." 1>&2
+fi
+
+if ! server_port_open "$host" "$port"; then
+  echo "" 1>&2
+  echo "AVISO: nada escuta em ${host}:${port} (rcssserver parado?)." 1>&2
+  echo "  Terminal 1: rcssserver" 1>&2
+  echo "            ou: rcssserver server::port=${port}" 1>&2
+  echo "  Terminal 2: cd $(dirname "$DIR")/src 2>/dev/null || cd ${DIR}" 1>&2
+  echo "            ./start.sh -i" 1>&2
+  echo "  Monitor: localhost:${port} -> Kick Off para a equipa entrar em campo." 1>&2
+  echo "" 1>&2
+fi
 
 # Run agent with optional output suppression (-i enables output)
 run_agent() {
   if [ -n "${show_info}" ]; then
     "$@" &
   else
-    "$@" >/dev/null 2>&1 &
+    "$@" >>"${TEAM_LOG}" 2>&1 &
   fi
 }
 
@@ -380,3 +418,29 @@ if [ "${usecoach}" = "true" ]; then
     if [ -n "${LOGO_ABS}" ]; then run_agent $coach ${coachopt} --team_graphic_file "${LOGO_ABS}"; else run_agent $coach ${coachopt}; fi
   fi
 fi
+
+sleep 2
+_player_n=0
+if command -v pgrep >/dev/null 2>&1; then
+  _player_n=$(pgrep -f "${player}" 2>/dev/null | wc -l)
+fi
+if [ "${_player_n}" -eq 0 ] 2>/dev/null; then
+  echo "" 1>&2
+  echo "ERRO: nenhum jogador ficou em execução." 1>&2
+  if [ -z "${show_info}" ]; then
+    echo "  Sem -i, a saída foi para: ${TEAM_LOG}" 1>&2
+    echo "  Últimas linhas:" 1>&2
+    tail -n 15 "${TEAM_LOG}" 2>/dev/null | sed 's/^/    /' 1>&2
+  fi
+  echo "  Confirme: rcssserver na porta ${port}; librcsc em LD_LIBRARY_PATH." 1>&2
+  exit 1
+fi
+
+echo ""
+echo "Equipa '${teamname}' lançada (${_player_n} jogadores + coach)."
+echo "  Servidor: ${host}:${port}  |  Coach: ${host}:${coach_port}"
+if [ -z "${show_info}" ]; then
+  echo "  Log dos agentes: ${TEAM_LOG}  (use ./start.sh -i para ver no terminal)"
+fi
+echo "  No monitor: conecte a ${host}:${port} e dê Kick Off."
+echo ""

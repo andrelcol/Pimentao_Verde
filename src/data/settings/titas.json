@@ -1,20 +1,19 @@
 {
-	"_comment": "Pimentao_Verde: config base da equipa (formação, risco, set plays).",
+	"_comment": "Perfil Rinobot ao jogar CONTRA TitasDaRobotica (nome exato no servidor). Substitui pimentao_verde.json via teams.conf.",
 	"Strategy": {
-		"Formation": "523",
+		"Formation": "433",
 		"TeamTactic": "Normal",
 		"MoveBeforeSetPlay": true
 	},
 	"ChainAction": {
 		"ChainNodeNumber": 1000,
 		"ChainDeph": 2,
-		"UseShootSafe": true,
-		"UseSmartShoot": false,
-		"DribblePosCountLow": 0.7,
-		"DribblePosCountHigh": 0.8,
-		"DribbleAlwaysDangerExceptPrioritiseDribble": true,
+		"UseShootSafe": false,
+		"DribblePosCountLow": 0.75,
+		"DribblePosCountHigh": 0.85,
+		"DribbleAlwaysDangerExceptPrioritiseDribble": false,
 		"UseOneVsOneFeint": true,
-		"DangerEvalForward": [32, 26, 20, 14, 10, 6, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+		"DangerEvalForward": [40, 34, 28, 22, 16, 10, 5, 2, 0, 0, 0, 0, 0, 0, 0],
 		"DangerEvalPenalty": [12, 9, 6, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 		"SlowPass": false,
 		"TryFindOneKickPassOppClose": false

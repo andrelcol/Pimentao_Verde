@@ -31,6 +31,9 @@
 #include "role_player.h"
 
 #include "bhv_chain_action.h"
+#include "chain_action/bhv_open_goal_shoot.h"
+#include "chain_action/bhv_strict_check_shoot.h"
+#include "chain_action/field_analyzer.h"
 #include "bhv_one_vs_one_feint.h"
 #include "bhv_basic_offensive_kick.h"
 #include "bhv_basic_move.h"
@@ -92,6 +95,27 @@ RolePlayer::doKick( PlayerAgent * agent )
         dlog.addText( Logger::TEAM,
                       __FILE__": (execute) 1v1 feint" );
         return;
+    }
+
+    if ( Bhv_OpenGoalShoot().execute( agent ) )
+    {
+        dlog.addText( Logger::TEAM,
+                      __FILE__": (execute) open goal shoot" );
+        agent->debugClient().addMessage( "OpenGoalShoot" );
+        return;
+    }
+
+    {
+        const WorldModel & wm = agent->world();
+        if ( FieldAnalyzer::isTitasDaRobotica( wm )
+             && wm.ball().pos().x > 20.0
+             && Bhv_StrictCheckShoot( -0.8 ).execute( agent ) )
+        {
+            dlog.addText( Logger::TEAM,
+                          __FILE__": (execute) titas relaxed shoot" );
+            agent->debugClient().addMessage( "TitasShoot" );
+            return;
+        }
     }
 
     if ( Bhv_ChainAction().execute( agent ) )

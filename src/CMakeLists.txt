@@ -119,6 +119,9 @@ chain_action/predict_state.cpp
 chain_action/body_force_shoot.cpp
 chain_action/actgen_simple_dribble.cpp
 chain_action/bhv_strict_check_shoot.cpp
+chain_action/smart_shoot_evaluator.cpp
+chain_action/bhv_smart_shoot.cpp
+chain_action/bhv_open_goal_shoot.cpp
 chain_action/hold_ball.cpp
 chain_action/actgen_cross.cpp
 chain_action/dribble.cpp
