@@ -89,6 +89,18 @@ public:
     bool mUseThPassSimInVoroScape = false;
 };
 
+class GameAnalysisSetting {
+public:
+    GameAnalysisSetting() {}
+    GameAnalysisSetting( Value & value );
+
+    bool mEnableGameAnalysisLog = false;
+    std::string mGameAnalysisLogDir = "/tmp/pv_debug";
+    bool mGameAnalysisLogFullMode = false;
+    int mGameAnalysisSnapshotInterval = 50;
+    int mGameAnalysisTopNCandidates = 3;
+};
+
 class DefenseMoveSetting{
 public:
     DefenseMoveSetting(){}
@@ -154,6 +166,7 @@ public:
         mNeck = new NeckSetting();
         mOffensiveMove = new OffensiveMoveSetting();
         mDefenseMove = new DefenseMoveSetting();
+        mGameAnalysis = new GameAnalysisSetting();
     }
     static Setting * i(){
         if(instance == nullptr)
@@ -171,5 +184,6 @@ public:
     NeckSetting * mNeck;
     OffensiveMoveSetting * mOffensiveMove;
     DefenseMoveSetting * mDefenseMove;
+    GameAnalysisSetting * mGameAnalysis;
 };
 #endif

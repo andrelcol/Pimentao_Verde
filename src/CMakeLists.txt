@@ -80,6 +80,8 @@ goalie/bhv_goalie_free_kick.cpp
 goalie/bhv_goalie_chase_ball.cpp
 bhv_basic_offensive_kick.cpp
 sample_player.cpp
+debug/game_analysis_logger.cpp
+debug/game_analysis_context.cpp
 bhv_basic_move.cpp
 sample_coach.cpp
 setting.cpp

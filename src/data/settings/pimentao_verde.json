@@ -29,5 +29,12 @@
 		"BackBlockMaxXToDefHPosX": 6.0,
 		"GoToDefendX": true,
 		"FixThMarkY": true
+	},
+	"GameAnalysis": {
+		"EnableGameAnalysisLog": false,
+		"GameAnalysisLogDir": "/tmp/pv_debug",
+		"GameAnalysisLogFullMode": false,
+		"GameAnalysisSnapshotInterval": 50,
+		"GameAnalysisTopNCandidates": 3
 	}
 }

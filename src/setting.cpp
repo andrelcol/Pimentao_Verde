@@ -107,6 +107,30 @@ ChainActionSetting::ChainActionSetting(Value & value){
     }
 }
 
+GameAnalysisSetting::GameAnalysisSetting( Value & value )
+{
+    if ( value.HasMember( "EnableGameAnalysisLog" ) )
+    {
+        mEnableGameAnalysisLog = value["EnableGameAnalysisLog"].GetBool();
+    }
+    if ( value.HasMember( "GameAnalysisLogDir" ) )
+    {
+        mGameAnalysisLogDir = value["GameAnalysisLogDir"].GetString();
+    }
+    if ( value.HasMember( "GameAnalysisLogFullMode" ) )
+    {
+        mGameAnalysisLogFullMode = value["GameAnalysisLogFullMode"].GetBool();
+    }
+    if ( value.HasMember( "GameAnalysisSnapshotInterval" ) )
+    {
+        mGameAnalysisSnapshotInterval = value["GameAnalysisSnapshotInterval"].GetInt();
+    }
+    if ( value.HasMember( "GameAnalysisTopNCandidates" ) )
+    {
+        mGameAnalysisTopNCandidates = value["GameAnalysisTopNCandidates"].GetInt();
+    }
+}
+
 StrategySetting::StrategySetting(Value & value){
     if(value.HasMember("Formation")){
         mFormation = value["Formation"].GetString();
@@ -377,5 +401,10 @@ void Setting::ReadJson(){
     if(d.HasMember("DefenseMove")){
         delete mDefenseMove;
         mDefenseMove = new DefenseMoveSetting(d["DefenseMove"]);
+    }
+    if ( d.HasMember( "GameAnalysis" ) )
+    {
+        delete mGameAnalysis;
+        mGameAnalysis = new GameAnalysisSetting( d["GameAnalysis"] );
     }
 }

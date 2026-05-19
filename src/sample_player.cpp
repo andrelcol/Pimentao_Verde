@@ -41,6 +41,7 @@
 #include "denoising/localization_denoiser_by_action.h"
 #include "roles/soccer_role.h"
 #include "pimentao_team_identity.h"
+#include "debug/game_analysis_logger.h"
 
 #include "sample_communication.h"
 // #include "keepaway_communication.h" // HEL_LIB
@@ -308,6 +309,13 @@ SamplePlayer::actionImpl()
     SamplePlayer::player_port = this->config().port();
     Setting::i();
     Setting::i()->SetTeamName(this->world().ourTeamName(), this->world().theirTeamName());
+
+    if ( Setting::i()->mGameAnalysis->mEnableGameAnalysisLog
+         && world().self().unum() == 1 )
+    {
+        GameAnalysisLogger::i().onCycle( world() );
+    }
+
     //
     // update strategy and analyzer
     //
